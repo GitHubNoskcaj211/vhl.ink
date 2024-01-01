@@ -1,4 +1,4 @@
-name = "vhlink"
+name = "linkshortener"
 type = "javascript"
 account_id = "0c904c572ba3518d990bd3bcbe592013"
 workers_dev = true
