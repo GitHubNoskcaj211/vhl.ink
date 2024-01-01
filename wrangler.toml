@@ -1,9 +1,9 @@
 name = "vhlink"
 type = "javascript"
-account_id = "39a76d640a29996bffbd58c36a537c2b"
+account_id = "0c904c572ba3518d990bd3bcbe592013"
 workers_dev = true
 route = ""
 zone_id = ""
 kv_namespaces = [
-  { binding = "LINKS", id = "77612e844ef647009a28a1153fcd0a96", preview_id = "77612e844ef647009a28a1153fcd0a96" }
+  { binding = "LINKS", id = "e24df198c1b04a7abce666e2f986c8d0", preview_id = "e24df198c1b04a7abce666e2f986c8d0" }
 ]
