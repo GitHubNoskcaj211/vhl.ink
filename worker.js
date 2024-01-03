@@ -35,8 +35,6 @@ async function handlePOST(request) {
 	const data = await request.formData();
 	const redirectURL = data.get('url');
 	const path = data.get('path');
-	
-	assert(path.split('/').length == 1, "Extensions with forward slashes are malformed.");
 
 	if (!redirectURL || !path)
 		return new Response('`url` and `path` need to be set.', { status: 400 });
@@ -49,6 +47,10 @@ async function handlePOST(request) {
 			return new Response('`url` needs to be a valid http url.', { status: 400 });
 		else throw e;
 	};
+
+	if (path.split('/').length != 1) {
+		return new Response('Extensions with forward slashes are malformed.', { status: 400 });
+	}
 
 	// will overwrite current path if it exists
 	await LINKS.put(path, redirectURL);
