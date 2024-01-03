@@ -2,11 +2,11 @@ export default {
   async fetch(request, env, ctx) {
 	  switch (request.method) {
 		case 'POST':
-			return event.respondWith(handlePOST(request, env));
+			return await handlePOST(request, env);
 		case 'DELETE':
-			return event.respondWith(handleDELETE(request, env));
+			return await handleDELETE(request, env);
 		default:
-			return event.respondWith(handleRequest(request, env));
+			return await handleRequest(request, env);
 	}
   },
 };
