@@ -41,7 +41,7 @@ const html = `<!DOCTYPE html>
  */
 async function handlePOST(request, env) {
 	const psk = request.headers.get('x-preshared-key');
-	if (psk !== SECRET_KEY)
+	if (psk !== env.SECRET_KEY)
 		return new Response('Sorry, bad key.', { status: 403 });
 
 	const shortener = new URL(request.url);
@@ -78,7 +78,7 @@ async function handlePOST(request, env) {
  */
 async function handleDELETE(request, env) {
 	const psk = request.headers.get('x-preshared-key');
-	if (psk !== SECRET_KEY)
+	if (psk !== env.SECRET_KEY)
 		return new Response('Sorry, bad key.', { status: 403 });
 
 	const url = new URL(request.url);
@@ -101,7 +101,7 @@ async function handleRequest(request, env) {
 	if (!path) {
 		// Return list of available shortlinks if user supplies admin credentials.
 		const psk = request.headers.get('x-preshared-key');
-		if (psk === SECRET_KEY) {
+		if (psk === env.SECRET_KEY) {
 			const { keys } = await env.LINKS.list();
 			let paths = "";
 			keys.forEach(element => paths += `${element.name}\n`);
