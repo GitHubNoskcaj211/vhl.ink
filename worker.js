@@ -1,15 +1,28 @@
-addEventListener('fetch', event => {
-	const { request } = event;
-
-	switch (request.method) {
+export default {
+  async fetch(request, env, ctx) {
+	  switch (request.method) {
 		case 'POST':
-			return event.respondWith(handlePOST(request));
+			return event.respondWith(handlePOST(request, env));
 		case 'DELETE':
-			return event.respondWith(handleDELETE(request));
+			return event.respondWith(handleDELETE(request, env));
 		default:
-			return event.respondWith(handleRequest(request, event));
+			return event.respondWith(handleRequest(request, env));
 	}
-});
+  },
+};
+
+// addEventListener('fetch', event => {
+// 	const { request } = event;
+
+// 	switch (request.method) {
+// 		case 'POST':
+// 			return event.respondWith(handlePOST(request));
+// 		case 'DELETE':
+// 			return event.respondWith(handleDELETE(request));
+// 		default:
+// 			return event.respondWith(handleRequest(request, event));
+// 	}
+// });
 
 const html = `<!DOCTYPE html>
 <body>
@@ -26,7 +39,7 @@ const html = `<!DOCTYPE html>
  * Respond to POST requests with shortened URL creation
  * @param {Request} request
  */
-async function handlePOST(request) {
+async function handlePOST(request, env) {
 	const psk = request.headers.get('x-preshared-key');
 	if (psk !== SECRET_KEY)
 		return new Response('Sorry, bad key.', { status: 403 });
@@ -53,7 +66,7 @@ async function handlePOST(request) {
 	}
 
 	// will overwrite current path if it exists
-	await LINKS.put(path, redirectURL);
+	await env.LINKS.put(path, redirectURL);
 	return new Response(`${redirectURL} available at ${shortener}${path}`, {
 		status: 201,
 	});
@@ -63,7 +76,7 @@ async function handlePOST(request) {
  * Respond to DELETE requests by deleting the shortlink
  * @param {Request} request
  */
-async function handleDELETE(request) {
+async function handleDELETE(request, env) {
 	const psk = request.headers.get('x-preshared-key');
 	if (psk !== SECRET_KEY)
 		return new Response('Sorry, bad key.', { status: 403 });
@@ -71,7 +84,7 @@ async function handleDELETE(request) {
 	const url = new URL(request.url);
 	const path = url.pathname.split('/')[1];
 	if (!path) return new Response('Not found', { status: 404 });
-	await LINKS.delete(path);
+	await env.LINKS.delete(path);
 	return new Response(`${path} deleted!`, { status: 200 });
 }
 
@@ -82,14 +95,14 @@ async function handleDELETE(request) {
  * shortlinks registered with the service.
  * @param {Request} request
  */
-async function handleRequest(request, event) {
+async function handleRequest(request, env) {
 	const url = new URL(request.url);
 	const path = url.pathname.split('/')[1];
 	if (!path) {
 		// Return list of available shortlinks if user supplies admin credentials.
 		const psk = request.headers.get('x-preshared-key');
 		if (psk === SECRET_KEY) {
-			const { keys } = await LINKS.list();
+			const { keys } = await env.LINKS.list();
 			let paths = "";
 			keys.forEach(element => paths += `${element.name}\n`);
 			
@@ -103,9 +116,9 @@ async function handleRequest(request, event) {
 		});
 	}
 
-	const redirectURL = await LINKS.get(path);
+	const redirectURL = await env.LINKS.get(path);
 	if (redirectURL) {
-		await ANALYTICS.prepare("INSERT INTO redirect_times (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path);
+		await env.ANALYTICS.prepare("INSERT INTO redirect_times (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path);
 		return Response.redirect(redirectURL, 302);
 	}
 
