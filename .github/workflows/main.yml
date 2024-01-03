@@ -10,6 +10,7 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@master
+      - run: npx install
       - name: Publish
         uses: cloudflare/wrangler-action@v3
         with:
