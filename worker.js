@@ -49,7 +49,7 @@ async function handlePOST(request) {
 	};
 
 	if (path.split('/').length != 1) {
-		return new Response('Extensions with forward slashes are malformed.', { status: 400 });
+		return new Response('Paths with forward slashes are malformed.', { status: 400 });
 	}
 
 	// will overwrite current path if it exists
