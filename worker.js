@@ -101,13 +101,7 @@ async function handleRequest(request, event) {
 
 	const redirectURL = await LINKS.get(path);
 	if (redirectURL) {
-		const analyticsReq = {
-			method: 'POST',
-			body: JSON.stringify({ 'path': path }),
-			headers: { 'Content-Type': 'application/json' },
-		};
-		event.waitUntil(fetch(ANALYTICS_URL, analyticsReq));
-
+		await env.ANALYTICS.prepare("INSERT INTO redirect_times (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path);
 		return Response.redirect(redirectURL, 302);
 	}
 
