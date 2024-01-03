@@ -105,7 +105,7 @@ async function handleRequest(request, env) {
 
 	const redirectURL = await env.LINKS.get(path);
 	if (redirectURL) {
-		const { results } = await env.ANALYTICS.prepare("INSERT INTO REDIRECT_TIMES (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path).run();
+		const { results } = await env.ANALYTICS.prepare("INSERT INTO REDIRECT_ANALYTICS (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path).run();
 		return Response.redirect(redirectURL, 302);
 	}
 
