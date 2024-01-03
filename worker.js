@@ -105,7 +105,7 @@ async function handleRequest(request, env) {
 
 	const redirectURL = await env.LINKS.get(path);
 	if (redirectURL) {
-		const { results } = await env.ANALYTICS.prepare("INSERT INTO REDIRECT_TIMES (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path);
+		const { results } = await env.ANALYTICS.prepare("INSERT INTO REDIRECT_TIMES (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path).run();
 		console.log(results);
 		const { results2 } = await env.ANALYTICS.prepare("SELECT * from REDIRECT_TIMES").all();
 		console.log(results2);
