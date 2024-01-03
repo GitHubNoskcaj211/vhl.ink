@@ -11,11 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Publish
-        uses: cloudflare/wrangler-action@v2
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           secrets: |
               SECRET_KEY
         env:
-            CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
             SECRET_KEY: ${{ secrets.SECRET_KEY }}
