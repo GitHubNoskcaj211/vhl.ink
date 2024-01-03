@@ -35,6 +35,8 @@ async function handlePOST(request) {
 	const data = await request.formData();
 	const redirectURL = data.get('url');
 	const path = data.get('path');
+	
+	assert(path.split('/').length == 1, "Extensions with forward slashes are malformed.");
 
 	if (!redirectURL || !path)
 		return new Response('`url` and `path` need to be set.', { status: 400 });
@@ -68,7 +70,7 @@ async function handleDELETE(request) {
 	const path = url.pathname.split('/')[1];
 	if (!path) return new Response('Not found', { status: 404 });
 	await LINKS.delete(path);
-	return new Response(`${request.url} deleted!`, { status: 200 });
+	return new Response(`${path} deleted!`, { status: 200 });
 }
 
 /**
