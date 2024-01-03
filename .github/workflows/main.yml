@@ -10,8 +10,13 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@master
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "latest"
+          cache: "npm"
       - name: Publish
-        uses: cloudflare/wrangler-action@3
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           secrets: |
