@@ -109,7 +109,7 @@ async function handleRequest(request, env) {
 		console.log(results);
 		const { results2 } = await env.ANALYTICS.prepare("SELECT * from REDIRECT_TIMES").all();
 		console.log(results2);
-		return new Response(results2, { status: 200 });
+		return Response.json(results2);
 		// return Response.redirect(redirectURL, 302);
 	}
 
