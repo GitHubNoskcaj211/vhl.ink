@@ -11,19 +11,6 @@ export default {
   },
 };
 
-// addEventListener('fetch', event => {
-// 	const { request } = event;
-
-// 	switch (request.method) {
-// 		case 'POST':
-// 			return event.respondWith(handlePOST(request));
-// 		case 'DELETE':
-// 			return event.respondWith(handleDELETE(request));
-// 		default:
-// 			return event.respondWith(handleRequest(request, event));
-// 	}
-// });
-
 const html = `<!DOCTYPE html>
 <body>
     <pre>
@@ -118,7 +105,8 @@ async function handleRequest(request, env) {
 
 	const redirectURL = await env.LINKS.get(path);
 	if (redirectURL) {
-		await env.ANALYTICS.prepare("INSERT INTO redirect_times (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path);
+		const { results } = await env.ANALYTICS.prepare("INSERT INTO redirect_times (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path);
+		console.log(results);
 		return Response.redirect(redirectURL, 302);
 	}
 
