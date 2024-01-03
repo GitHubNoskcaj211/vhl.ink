@@ -10,5 +10,5 @@ kv_namespaces = [
   { binding = "LINKS", id = "dcc3c66c51a44bdaa78090665b36f724", preview_id = "dcc3c66c51a44bdaa78090665b36f724" }
 ]
 d1_databases = [
-  { binding = "ANALYTICS", database_name = "link-shortener-analytics", database_id = "2315b595-524c-41bc-92c2-bd20da06d38e"}
+  { binding = "ANALYTICS", database_name = "link-shortener-analytics", database_id = "2315b595524c41bc92c2bd20da06d38e"}
 ]
