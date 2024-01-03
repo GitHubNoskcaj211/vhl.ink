@@ -107,9 +107,10 @@ async function handleRequest(request, env) {
 	if (redirectURL) {
 		const { results } = await env.ANALYTICS.prepare("INSERT INTO redirect_times (redirect_time, redirect_key) VALUES (?, ?)").bind(Date.now(), path);
 		console.log(results);
-		const { results2 } = await env.ANALYTICS.prepare("SELECT * from redirect_times");
+		const { results2 } = await env.ANALYTICS.prepare("SELECT * from redirect_times").all();
 		console.log(results2);
-		return Response.redirect(redirectURL, 302);
+		return new Response(results2, { status: 200 });
+		// return Response.redirect(redirectURL, 302);
 	}
 
 	return new Response('URL not found. Sad!', { status: 404 });
