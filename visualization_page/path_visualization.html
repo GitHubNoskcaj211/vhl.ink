@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vcolink analytics</title>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script type="text/javascript" src="visualization.js"></script>
+</head>
+<body>
+    <p>
+        Here are the analytics for <span id="path"></span><br>
+    </p>
+    <div>
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date" name="start-date">
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date" name="end-date">
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+    <div id='cumulative_redirects_over_time'>Loading plot...</div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const path = urlParams.get('path');
+        const pathElement = document.getElementById('path');
+        pathElement.textContent = path;
+    </script>
+    <script>
+        const applyFilters = () => {
+            makeAllPlots();
+        };
+    </script>
+    <script>
+        (() => makeAllPlots())();
+    </script>
+</body>
+</html>

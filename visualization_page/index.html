@@ -7,7 +7,7 @@
 <body>
     <p>
         Welcome to vcolink analytics.<br>
-        to get specific analytics go to <code>/&lt;path&gt;</code><br>
+        Click on a path to see analytics for that path.<br>
     </p>
     <p>
         <div id="paths">Loading paths...</div>
@@ -15,14 +15,28 @@
 </body>
 <script>
     async function getPaths() {
-    const paths = await fetch("https://cnfpt360q8.execute-api.us-east-2.amazonaws.com/default/getVHLinkPaths").then(r => r.json());
-    let html = "";
-    paths.sort().forEach(p => {
-        html += `<a href="/${p}">/${p}</a><br>`
-    });
-    const div = document.getElementById("paths");
-    div.innerHTML = html;
-};
-(() => getPaths())();
+        const div = document.getElementById("paths");
+        
+        const paths = await fetch("https://api.vcolink.com/?command=get_all_kv_paths", {
+            method: 'GET'
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            div.innerHTML = `There was an error... check the console logs.`;
+            return;
+        });
+
+        let html = '';
+        console.log(paths);
+        paths.sort((a, b) => a.name.localeCompare(b.name)).forEach(element => {
+            html += `<a href="path_visualization.html?path=${encodeURIComponent(element.name)}">Path: ${element.name} | Redirect: ${element.value}</a><br>`;
+        });
+        div.innerHTML = html;
+    };
+    (() => getPaths())();
 </script>
 </html>

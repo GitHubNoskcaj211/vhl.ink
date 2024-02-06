@@ -22,7 +22,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: api_worker
-          secrets: |
-              SECRET_KEY
     env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}

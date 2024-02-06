@@ -4,55 +4,46 @@ export default {
           case 'GET':
                 return await handleGET(request, env);
           default:
-                return new Response('No response.', { status: 404 });
+                return new Response('No response.', { status: 404, headers: corsHeaders });
       }
     },
   };
   
+  const corsHeaders = {
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET',
+    'Access-Control-Allow-Origin': 'https://analytics.vcolink.com',
+  }
+
   /**
    * Respond to GET requests with the data.
    * @param {Request} request
    */
   async function handleGET(request, env) {
-    const psk = request.headers.get('x-preshared-key');
-    if (psk !== env.SECRET_KEY) {
-        return new Response('Sorry, bad key.', { status: 403 });
+    const url = new URL(request.url);
+    const command = url.searchParams.get('command');
+
+    if (!command) {
+        return new Response('No command to run.', { status: 404, headers: corsHeaders });
     }
-
-    const data = await request.formData();
-    const command = data.get('command');
-
+    
     switch (command) {
         case "get_all_kv_paths":
-            const { keys } = await env.LINKS.list();
-            return new Response(JSON.stringify(keys), { status: 200, headers: { 'Content-Type': 'application/json' } });
-        case "get_analytics_for_path":
-            if (!'path' in data) {
-                return new Response('Need path set "path" for get_analytics_for_path command.', { status: 404 });
+            const keys = await env.LINKS.list();
+            const links = [];
+            for (const { name } of keys.keys) {
+                const value = await env.LINKS.get(name)
+                links.push({ name: name, value: value })
             }
-            const path = data.get('path');
+            return new Response(JSON.stringify(links), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+        case "get_analytics_for_path":
+            const path = url.searchParams.get('path');
+            if (!path) {
+                return new Response('Need path set "path" for get_analytics_for_path command.', { status: 404, headers: corsHeaders });
+            }
             const { results } = await env.ANALYTICS.prepare("SELECT * FROM REDIRECT_ANALYTICS WHERE redirect_key = ?").bind(path).run();
-            return new Response(JSON.stringify(results), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            return new Response(JSON.stringify(results), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
         default:
-            return new Response('Not a valid command.', { status: 404 });
+            return new Response('Not a valid command.', { status: 404, headers: corsHeaders });
     }
 }
-
-
-// if (!path) {
-//     // Return list of available shortlinks if user supplies admin credentials.
-//     const psk = request.headers.get('x-preshared-key');
-//     if (psk === env.SECRET_KEY) {
-//         const { keys } = await env.LINKS.list();
-//         let paths = "";
-//         keys.forEach(element => paths += `${element.name}\n`);
-        
-//         return new Response(paths, { status: 200 });
-//     }
-
-//     return new Response(html, {
-//         headers: {
-//             'content-type': 'text/html;charset=UTF-8',
-//         },
-//     });
-// }
