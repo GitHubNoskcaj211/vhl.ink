@@ -14,11 +14,9 @@ export default {
 const html = `<!DOCTYPE html>
 <body>
     <pre>
-    use an actual path if you're trying to fetch something.
-    send a POST request with form data "url" and "path" if you're trying to put something.
-    set x-preshared-key header for authentication.
+    This is the link shortener for Vanderbilt Commodore Orchestra. Use a path to be redirected to another page.
     
-    source: <a href="https://github.com/VandyHacks/vhl.ink">VandyHacks/vhl.ink</a>
+    Source: <a href="https://github.com/GitHubNoskcaj211/vhl.ink">GitHubNoskcaj211/vhl.ink</a>
     </pre>
 </body>`;
 

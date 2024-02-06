@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vhl.ink analytics</title>
+</head>
+<body>
+    <p>
+        hi watch this space for analytics.<br>
+        to get specific analytics go to <code>/&lt;path&gt;</code><br>
+    </p>
+    <p>
+        <div id="paths">Loading paths...</div>
+    </p>
+</body>
+<script>
+    async function getPaths() {
+    const paths = await fetch("https://cnfpt360q8.execute-api.us-east-2.amazonaws.com/default/getVHLinkPaths").then(r => r.json());
+    let html = "";
+    paths.sort().forEach(p => {
+        html += `<a href="/${p}">/${p}</a><br>`
+    });
+    const div = document.getElementById("paths");
+    div.innerHTML = html;
+};
+(() => getPaths())();
+</script>
+</html>
