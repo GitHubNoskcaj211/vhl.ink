@@ -1,0 +1,14 @@
+name = "api"
+type = "javascript"
+account_id = "f59e412ed6f791e124983352b9bac68e"
+workers_dev = true
+route = ""
+zone_id = ""
+compatibility_date = "2024-01-01"
+main = "./worker.js"
+kv_namespaces = [
+  { binding = "LINKS", id = "a14bca4d225c47d38b81ab4c92625146", preview_id = "a14bca4d225c47d38b81ab4c92625146" }
+]
+d1_databases = [
+  { binding = "ANALYTICS", database_name = "link-shortener-analytics", database_id = "baf15de9-df91-453b-a769-6974f72d10af"}
+]
