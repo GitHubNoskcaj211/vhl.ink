@@ -50,7 +50,7 @@ const makeCumulativeRedirectsOverTime = async () => {
 
     // Create layout for Plotly
     let layout = {
-        title: `Cumulative Number of Redirects over Time ${path}`,
+        title: `Cumulative Number of Redirects over Time for ${path}`,
     };
 
     // Plot the chart using Plotly
