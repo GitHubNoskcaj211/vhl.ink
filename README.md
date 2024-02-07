@@ -1,32 +1,29 @@
-# vhl.ink
+# vcolink
 
-Custom link shortener service using Cloudflare Workers + KV store on your domain. The Workers free tier is quite generous and perfectly suited for this since KV is optimized for high reads and infrequent writes, which is our use case. 
+This project is based off vhl.ink - only main difference is that database is stored through Cloudflare D1 instead of AWS. 
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/VandyHacks/vhl.ink)
+Custom link shortener service using Cloudflare Workers + KV store on your domain. The Workers free tier is quite generous and perfectly suited for this since KV is optimized for high reads and infrequent writes, which is our use case.
 
-This API is easily consumed programmatically, such as through [shell functions](https://github.com/aadibajpai/dotfiles/blob/f1c58f7f19778c0d591b0a199427c519835a9614/fish/.config/fish/functions/shorten.fish#L1-L7) or [slack slash commands](https://github.com/VandyHacks/nimbus), making it trivial to shorten links on the fly.
-
-Additionally, it is possible to make a simple form to create short links right from a webpage if that is more to your liking. See this [example](https://developers.cloudflare.com/workers/examples/read-post) for more info on that.
+This API is easily consumed through web requests.
 
 ## Usage
 
 ### Creating short links
-send POST request with form data `url` and `path` to redirect vhl.ink/path to url.
+Send POST request with form data `url` and `path` to redirect vcolink.com/<path> to url.
 
-for authentication, pass a secret key in a `x-preshared-key` header.
+For authentication, pass a secret key in a `x-preshared-key` header.
 
-if `path` exists already, the value will be overwritten (feature, not a bug).
+If `path` exists already, the value will be overwritten.
 
 #### API Example
 
 ```bash
-curl --location --request POST "https://vhl.ink" \
-    -H "x-preshared-key: your secret key goes here" \
+curl --location --request POST "https://vcolink.com" \
+    -H "x-preshared-key: <your-secret-key>" \
     -H "Content-Type: application/x-www-form-urlencoded" \
-    --data-urlencode "url=$URL" \
-    --data-urlencode "path=$NAME"
+    --data-urlencode "url=<full-url>" \
+    --data-urlencode "path=<path>"
 ```
-passing https://github.com/VandyHacks to url, and gh to path will make https://vhl.ink/gh redirect to it (this is a real example).
 
 ### Deleting short links
 
@@ -37,44 +34,37 @@ Authentication is required; pass the secret key in the `x-preshared-key` header.
 This method is idempotent, being that successive attempts to delete an already-deleted shortlink
 will result in status 200 (OK).
 
-#### API Example
-
-```bash
-curl --location --request DELETE "https://vhl.ink/gh" \
-    -H "x-preshared-key: ${SECRET_KEY}"
-```
-
-Will delete the shortlink available at https://vhl.ink/gh
-
-### Listing short links
-
-Sending an authenticated GET request to the vhl.ink domain root will respond with a list of all
-shortlinks maintained by the service.
-
-Authentication is required; pass the secret key in the `x-preshared-key` header.
+Note: Redirect data is not deleted, just the redirect is deactivated.
 
 #### API Example
 
 ```bash
-curl --location --request GET "https://vhl.ink" \
-    -H "x-preshared-key: ${SECRET_KEY}"
+curl --location --request DELETE "https://vcolink.com/<path>" \
+    -H "x-preshared-key: <your-secret-key>"
 ```
-
-Will return a JSON array of keys with one to three properties:
-
-```json
-  [{ name: "gh", expiration: null, metadata: "https://github.com/VandyHacks/vaken"}, ...]
-```
-(From https://developers.cloudflare.com/workers/runtime-apis/kv#more-detail)
-
-`expiration` and `metadata` are optional.
 
 ### Consuming
 
-this is the easy part, simply open the shortened link in your browser of choice! 
+Open the shortened link to be redirected.
+
+### API
+api.vcolink.com allows you to get data stored.
+
+To get all possible paths (and the corresponding redirect URL):
+```bash
+curl --location --request GET "https://api.vcolink.com/?command=get_all_kv_paths"
+```
+
+To get all database entries for a path:
+```bash
+curl --location --request GET "https://api.vcolink.com/?command=get_analytics_for_path&path=<path>"
+```
+
+### Analytics
+[analytics.vcolink.com](analytics.vcolink.com) will display all active paths and redirects. Clicking on one of these will give analytics for that path.
 
 ## Deploying
 
-Automatically deploys to Cloudflare Workers on push using GitHub Actions. You will only need to modify the account and kv namespace values in [wrangler.toml](wrangler.toml), and set the repo secrets `CF_API_TOKEN` and `SECRET_KEY` (this is the preshared header authentication key) used in the [workflow](.github/workflows/main.yml). 
+This project automatically deploys the api and redirect Cloudflare Workers on push using GitHub Actions. You will need to modify the account, kv namespace, and D1 values in both wrangler.toml, and set the repo secrets `CF_API_TOKEN` and `SECRET_KEY` (this is the preshared header authentication key) that are used in the GitHub Action during deployment.
 
-Oh, and run the worker on the route you want your shortener service to be on of course.
+The visualization_page is automatically deployed on push through CloudFlare pages.
